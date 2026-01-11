@@ -9,10 +9,10 @@ Contraste élevé : Toutes les combinaisons respectent WCAG AA pour l’accessib
 Tokens de couleurs : On définit des jetons nommés (par ex. --color-primary, --color-neutral-light, --color-accent) pour faciliter les mises à jour globales. Par exemple, --color-primary peut être appliqué aux boutons et titres clés. Changer un jeton met à jour toutes les instances correspondantes. 
 
 :root { 
-  /* Couleurs */ 
-  --color-primary:      #2C5F7C; /* Bleu profond apaisant (60%) */ 
-  --color-neutral:      #F5F5F0; /* Beige clair (30%) */ 
-  --color-accent:       #D4A574; /* Or discret (10%) */ 
+/* Couleurs */ 
+  --color-primary:      #064e3b; /* Vert émeraude profond (60%) */ 
+  --color-neutral:      #F5F5F0; /* Beige clair / Ivoire (30%) */ 
+  --color-accent:       #d4af37; /* Or Ihsan (10%) */
   --color-text-dark:    #333333; /* Texte principal */ 
   --color-text-light:   #666666; /* Texte secondaire */ 
  
