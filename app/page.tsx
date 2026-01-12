@@ -4,9 +4,16 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { PrayerTimesWidget } from '@/components/widgets/PrayerTimes';
 import Link from 'next/link';
+import { client } from '@/sanity/lib/client';
+import { PRAYER_TIMES_QUERY, NEWS_QUERY } from '@/sanity/lib/queries';
+import { urlFor } from '@/sanity/lib/image';
 
-export default function Home() {
+export default async function Home() {
     const lang = "fr"; // Hardcoded default
+
+    // Fetch data
+    const prayerTimes = await client.fetch(PRAYER_TIMES_QUERY);
+    const news = await client.fetch(NEWS_QUERY);
 
     return (
         <div className="space-y-0">
@@ -55,7 +62,13 @@ export default function Home() {
                             <h3 className="text-xl font-bold text-primary mb-2 font-serif">Horaires</h3>
                             <div className="mb-4 flex-grow">
                                 <p className="text-gray-600 mb-4">Prochaine prière à Montréal :</p>
-                                <PrayerTimesWidget />
+                                <PrayerTimesWidget
+                                    fajr={prayerTimes?.fajr}
+                                    dhuhr={prayerTimes?.dhuhr}
+                                    asr={prayerTimes?.asr}
+                                    maghrib={prayerTimes?.maghrib}
+                                    isha={prayerTimes?.isha}
+                                />
                             </div>
                             <Link href={`/${lang}/services`} className="text-primary font-medium group-hover:underline flex items-center">
                                 Horaires complets
@@ -79,15 +92,34 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-4">
                     <h2 className="text-3xl font-bold font-serif text-primary mb-8">Actualités & Événements</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[1, 2, 3].map((i) => (
-                            <div key={i} className="group cursor-pointer">
-                                <div className="aspect-video bg-neutral-200 rounded-lg mb-4 relative overflow-hidden">
-                                    <div className="absolute inset-0 flex items-center justify-center text-gray-400 font-medium">Image Événement {i}</div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {news && news.length > 0 ? (
+                                news.map((item: any) => (
+                                    <div key={item._id} className="group cursor-pointer">
+                                        <div className="aspect-video bg-neutral-200 rounded-lg mb-4 relative overflow-hidden">
+                                            {item.mainImage ? (
+                                                <img
+                                                    src={urlFor(item.mainImage).width(400).height(225).url()}
+                                                    alt={item.title}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 flex items-center justify-center text-gray-400 font-medium">Pas d'image</div>
+                                            )}
+                                        </div>
+                                        <span className="text-sm font-bold text-[#d4af37]">
+                                            {new Date(item.publishedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                        </span>
+                                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">{item.title}</h3>
+                                        {item.excerpt && <p className="text-gray-600 mt-2 text-sm line-clamp-2">{item.excerpt}</p>}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="col-span-3 text-center text-gray-500 py-12">
+                                    <p>Aucune actualité pour le moment.</p>
                                 </div>
-                                <span className="text-sm font-bold text-[#d4af37]">À venir</span>
-                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">Conférence mensuelle : La spiritualité au quotidien</h3>
-                            </div>
-                        ))}
+                            )}
+                        </div>
                     </div>
                 </div>
             </section>
